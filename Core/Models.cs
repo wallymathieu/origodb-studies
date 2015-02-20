@@ -10,39 +10,24 @@ namespace SomeBasicOrigoDbApp.Core
 	[Serializable]
 	public class Models : Model
 	{
-		private IDictionary<long, IList<Customer>> _objects = new Dictionary<long, IList<Customer>>();
-		private IDictionary<long, IList<Product>> _objects2 = new Dictionary<long, IList<Product>>();
-		private IDictionary<long, IList<Order>> _objects3 = new Dictionary<long, IList<Order>>();
+		private IDictionary<long, Customer> _objects = new Dictionary<long, Customer>();
+		private IDictionary<long, Product> _objects2 = new Dictionary<long, Product>();
+		private IDictionary<long, Order> _objects3 = new Dictionary<long, Order>();
 		public void Save(Customer obj) 
 		{
-			var t = obj.GetType();
-            if (!_objects.ContainsKey(obj.Id))
-			{
-				_objects[obj.Id] = new List<Customer>();
-			}
-			_objects[obj.Id].Add(obj);
+			_objects[obj.Id] = obj;
 		}
 		public void Save(Product obj)
 		{
-			var t = obj.GetType();
-			if (!_objects2.ContainsKey(obj.Id))
-			{
-				_objects2[obj.Id] = new List<Product>();
-			}
-			_objects2[obj.Id].Add(obj);
+			_objects2[obj.Id] = obj;
 		}
 		public void Save(Order obj)
 		{
-			var t = obj.GetType();
-			if (!_objects3.ContainsKey(obj.Id))
-			{
-				_objects3[obj.Id] = new List<Order>();
-			}
-			_objects3[obj.Id].Add(obj);
+			_objects3[obj.Id] = obj;
 		}
 		public IEnumerable<Customer> QueryOverCustomers()
 		{
-			return _objects.Values.Select(v=>v.Last());
+			return _objects.Values;
 		}
 
 		public Customer GetCustomer(int v) 
@@ -51,7 +36,7 @@ namespace SomeBasicOrigoDbApp.Core
 		}
 		public IEnumerable<Product> QueryOverProducts()
 		{
-			return _objects2.Values.Select(v => v.Last());
+			return _objects2.Values;
 		}
 
 		public Product GetProduct(int v)

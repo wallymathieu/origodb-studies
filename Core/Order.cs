@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace SomeBasicOrigoDbApp.Core
 {
 	[Serializable]
-	public class Order : IIdentifiableByNumber
+	public class Order 
     {
         public virtual Customer Customer { get; set; }
 
