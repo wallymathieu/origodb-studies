@@ -17,7 +17,7 @@ namespace SomeBasicOrigoDbApp.Tests
 		[Test]
 		public void CanGetCustomerById()
 		{
-			var customer = _engine.Execute(new Get<Customer> { Id = 1 });
+			var customer = _engine.Execute(new GetCustomer { Id = 1 });
 
 			Assert.IsNotNull(customer);
 		}
@@ -26,7 +26,7 @@ namespace SomeBasicOrigoDbApp.Tests
 		public void CanGetCustomerByFirstname()
 		{
 			var customers = _engine.Execute(m=>
-				m.QueryOver<Customer>()
+				m.QueryOverCustomers()
 				.Where(c => c.Firstname == "Steve")
 				.ToList());
 			Assert.AreEqual(3, customers.Count);
@@ -35,7 +35,7 @@ namespace SomeBasicOrigoDbApp.Tests
 		[Test]
 		public void CanGetProductById()
 		{
-			var product = _engine.Execute(m=>m.Get<Product>(1));
+			var product = _engine.Execute(m=>m.GetProduct(1));
 
 			Assert.IsNotNull(product);
 		}
@@ -56,7 +56,20 @@ namespace SomeBasicOrigoDbApp.Tests
 		{
 			_engine =(LocalEngineClient<Models>) Engine.For<Models>(CreateConfig());
 			XmlImport.Parse(XDocument.Load(Path.Combine("TestData", "TestData.xml")), new[] { typeof(Customer), typeof(Order), typeof(Product) },
-							(type, obj) => _engine.Execute(new AddCommand { Object = obj }), "http://tempuri.org/Database.xsd");
+							(type, obj) =>
+							{
+								if (obj is Customer) {
+									_engine.Execute(new AddCustomerCommand { Object = (Customer)obj });
+                                }
+								if (obj is Product)
+								{
+									_engine.Execute(new AddProductCommand { Object = (Product)obj });
+								}
+								if (obj is Order)
+								{
+									_engine.Execute(new AddOrderCommand { Object = (Order)obj });
+								}
+							}, "http://tempuri.org/Database.xsd");
 		}
 
 		public EngineConfiguration CreateConfig()

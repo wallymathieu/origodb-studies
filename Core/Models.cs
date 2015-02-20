@@ -10,32 +10,80 @@ namespace SomeBasicOrigoDbApp.Core
 	[Serializable]
 	public class Models : Model
 	{
-		private IDictionary<Type, IList<IIdentifiableByNumber>> _objects = new Dictionary<Type, IList<IIdentifiableByNumber>>();
-		public void Save(object obj) 
+		private IDictionary<long, IList<Customer>> _objects = new Dictionary<long, IList<Customer>>();
+		private IDictionary<long, IList<Product>> _objects2 = new Dictionary<long, IList<Product>>();
+		private IDictionary<long, IList<Order>> _objects3 = new Dictionary<long, IList<Order>>();
+		public void Save(Customer obj) 
 		{
 			var t = obj.GetType();
-            if (!_objects.ContainsKey(t))
+            if (!_objects.ContainsKey(obj.Id))
 			{
-				_objects[t] = new List<IIdentifiableByNumber>();
+				_objects[obj.Id] = new List<Customer>();
 			}
-			_objects[t].Add((IIdentifiableByNumber)obj);
+			_objects[obj.Id].Add(obj);
+		}
+		public void Save(Product obj)
+		{
+			var t = obj.GetType();
+			if (!_objects2.ContainsKey(obj.Id))
+			{
+				_objects2[obj.Id] = new List<Product>();
+			}
+			_objects2[obj.Id].Add(obj);
+		}
+		public void Save(Order obj)
+		{
+			var t = obj.GetType();
+			if (!_objects3.ContainsKey(obj.Id))
+			{
+				_objects3[obj.Id] = new List<Order>();
+			}
+			_objects3[obj.Id].Add(obj);
+		}
+		public IEnumerable<Customer> QueryOverCustomers()
+		{
+			return _objects.Values.Select(v=>v.Last());
 		}
 
-		public IEnumerable<T> QueryOver<T>()
+		public Customer GetCustomer(int v) 
 		{
-			return _objects[typeof(T)].Cast<T>();
+			return QueryOverCustomers().SingleOrDefault(t => t.Id == v);
+		}
+		public IEnumerable<Product> QueryOverProducts()
+		{
+			return _objects2.Values.Select(v => v.Last());
 		}
 
-		public T Get<T>(int v) where T : IIdentifiableByNumber
+		public Product GetProduct(int v)
 		{
-			return QueryOver<T>().SingleOrDefault(t => t.Id == v);
+			return QueryOverProducts().SingleOrDefault(t => t.Id == v);
 		}
 	}
 
 	[Serializable]
-	public class AddCommand : Command<Models> 
+	public class AddCustomerCommand : Command<Models> 
 	{
-		public object Object { get; set; }
+		public Customer Object { get; set; }
+
+		public override void Execute(Models model)
+		{
+			model.Save(Object);
+		}
+	}
+	[Serializable]
+	public class AddProductCommand : Command<Models>
+	{
+		public Product Object { get; set; }
+
+		public override void Execute(Models model)
+		{
+			model.Save(Object);
+		}
+	}
+	[Serializable]
+	public class AddOrderCommand : Command<Models>
+	{
+		public Order Object { get; set; }
 
 		public override void Execute(Models model)
 		{
@@ -44,13 +92,13 @@ namespace SomeBasicOrigoDbApp.Core
 	}
 
 	[Serializable]
-	public class Get<T> : Query<Models, T> where T : IIdentifiableByNumber
+	public class GetCustomer : Query<Models, Customer> 
 	{
 		public int Id { get; set; }
 
-		public override T Execute(Models model) 
+		public override Customer Execute(Models model) 
 		{
-			return model.Get<T>(Id);
+			return model.GetCustomer(Id);
 		}
 	}
 
