@@ -3,32 +3,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
-using NUnit.Framework;
 using SomeBasicOrigoDbApp.Core;
 
 namespace SomeBasicOrigoDbApp.Tests
 {
-    [TestFixture]
     public class XmlImport
     {
-        [Test]
-        public void TestParse()
-        {
-            XNamespace ns = "http://tempuri.org/Database.xsd";
-            var file = XDocument.Parse(@"<?xml version=""1.0"" standalone=""yes""?>
-<Database xmlns=""http://tempuri.org/Database.xsd"">
-  <Customer>
-    <Id>1</Id>
-    <Firstname>Steve</Firstname>
-    <Lastname>Bohlen</Lastname>
-    <Version>1</Version>
-  </Customer></Database>");
-            var cust = (Customer)Parse(file.Root.Elements(ns + typeof(Customer).Name).First(), typeof(Customer), "http://tempuri.org/Database.xsd");
-            Assert.That(cust.Id, Is.EqualTo(1));
-            Assert.That(cust.Firstname, Is.EqualTo("Steve"));
-            Assert.That(cust.Lastname, Is.EqualTo("Bohlen"));
-        }
-
         public static object Parse(XElement target, Type type, XNamespace ns)
         {
             var props = type.GetProperties();
@@ -55,8 +35,6 @@ namespace SomeBasicOrigoDbApp.Tests
         public static void Parse(XDocument xDocument, IEnumerable<Type> types, Action<Type, Object> onParsedEntity, XNamespace ns)
         {
             var db = xDocument.Root;
-            Assert.That(db, Is.Not.Null);
-
             foreach (var type in types)
             {
                 var elements = db.Elements(ns + type.Name);
