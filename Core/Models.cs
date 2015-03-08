@@ -30,7 +30,7 @@ namespace SomeBasicOrigoDbApp.Core
 
 		public Customer GetCustomer(int v) 
 		{
-			return QueryOverCustomers().SingleOrDefault(t => t.Id == v);
+            return _customers[v];
 		}
 
 		public IEnumerable<Product> QueryOverProducts()
@@ -40,12 +40,17 @@ namespace SomeBasicOrigoDbApp.Core
 
 		public Product GetProduct(int v)
 		{
-			return QueryOverProducts().SingleOrDefault(t => t.Id == v);
+            return _products[v];
 		}
+
+        public IEnumerable<Order> QueryOverOrders()
+        {
+            return _orders.Values;
+        }
 
 		public Order GetOrder(int v)
 		{
-			return _orders.Values.SingleOrDefault(t=>t.Id == v);
+			return _orders[v];
 		}
 
 		public Customer GetTheCustomerForOrder(int v)
@@ -53,76 +58,4 @@ namespace SomeBasicOrigoDbApp.Core
 			return GetOrder(v).Customer;
 		}
 	}
-
-	[Serializable]
-	public class AddCustomerCommand : Command<Models> 
-	{
-
-        public virtual int Id { get; set; }
-
-        public virtual string Firstname { get; set; }
-
-        public virtual string Lastname { get; set; }
-
-		public virtual int Version { get; set; }
-
-		public override void Execute(Models model)
-		{
-			model.Save(new Customer{ Id = Id, Firstname = Firstname, Lastname = Lastname, Version = Version });
-		}
-	}
-	[Serializable]
-	public class AddProductCommand : Command<Models>
-	{
-        public virtual float Cost { get; set; }
-
-        public virtual string Name { get; set; }
-
-        public virtual int Id { get; set; }
-
-        public virtual int Version { get; set; }
-
-		public override void Execute(Models model)
-		{
-			model.Save(new Product{ Id=Id, Cost=Cost, Name=Name, Version=Version });
-		}
-	}
-	[Serializable]
-	public class AddOrderCommand : Command<Models>
-	{
-        public virtual int Customer { get; set; }
-
-        public virtual DateTime OrderDate { get; set; }
-
-        public virtual int Id { get; set; }
-
-		public override void Execute(Models model)
-		{
-            model.Save(new Order{ Customer=model.GetCustomer(Customer), OrderDate=OrderDate,Id=Id} );
-		}
-	}
-
-	[Serializable]
-	public class GetCustomer : Query<Models, Customer> 
-	{
-		public int Id { get; set; }
-
-		public override Customer Execute(Models model) 
-		{
-			return model.GetCustomer(Id);
-		}
-	}
-
-	[Serializable]
-	public class AddProductToOrder : Command<Models>
-	{
-		public int OrderId{get;set;}
-		public int ProductId{get;set;}
-		
-		public override void Execute(Models model)
-		{
-			model.GetOrder(OrderId).Products.Add(model.GetProduct(ProductId));
-		}
-	}
-
 }
