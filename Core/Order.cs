@@ -6,6 +6,11 @@ namespace SomeBasicOrigoDbApp.Core
 	[Serializable]
 	public class Order 
     {
+        public Order()
+        {
+            Products = new List<Product>();
+        }
+
         public virtual Customer Customer { get; set; }
 
         public virtual DateTime OrderDate { get; set; }

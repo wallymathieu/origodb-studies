@@ -5,6 +5,7 @@ using SomeBasicOrigoDbApp.Core;
 using OrigoDB.Core;
 using OrigoDB.Core.Test;
 using System.Linq;
+using System;
 
 namespace SomeBasicOrigoDbApp.Tests
 {
@@ -40,36 +41,63 @@ namespace SomeBasicOrigoDbApp.Tests
 			Assert.IsNotNull(product);
 		}
 
-		[SetUp]
-		public void Setup()
+		[Test]
+		public void OrderContainsProduct()
 		{
+			var order = _engine.Execute(m=>m.GetOrder(1));
+			Assert.True(order.Products.Any(p => p.Id == 1));
+		}
+		[Test]
+		public void OrderHasACustomer()
+		{
+			Assert.IsNotNullOrEmpty(_engine.Execute(m=>m.GetTheCustomerForOrder(1)).Firstname);
 		}
 
-
-		[TearDown]
-		public void TearDown()
-		{
-		}
 
 		[TestFixtureSetUp]
 		public void TestFixtureSetup()
 		{
 			_engine =(LocalEngineClient<Models>) Engine.For<Models>(CreateConfig());
-			XmlImport.Parse(XDocument.Load(Path.Combine("TestData", "TestData.xml")), new[] { typeof(Customer), typeof(Order), typeof(Product) },
-							(type, obj) =>
-							{
-								if (obj is Customer) {
-									_engine.Execute(new AddCustomerCommand { Object = (Customer)obj });
-                                }
-								if (obj is Product)
-								{
-									_engine.Execute(new AddProductCommand { Object = (Product)obj });
-								}
-								if (obj is Order)
-								{
-									_engine.Execute(new AddOrderCommand { Object = (Order)obj });
-								}
-							}, "http://tempuri.org/Database.xsd");
+			var import = new XmlImport(XDocument.Load(Path.Combine("TestData", "TestData.xml")), "http://tempuri.org/Database.xsd");
+	
+			import.Parse("Customer", entity=>
+				
+				_engine.Execute(new AddCustomerCommand
+				{ 
+					Id=int.Parse(entity.Id),
+					Firstname = entity.Firstname,
+					Lastname = entity.Lastname,
+					Version = int.Parse(entity.Version)
+				})
+			);
+
+			import.Parse("Order", entity=>
+				
+				_engine.Execute(new AddOrderCommand
+				{ 
+					Customer=int.Parse(entity.Customer),
+					Id=int.Parse(entity.Id),
+					OrderDate = DateTime.Parse( entity.OrderDate)
+				})
+			);
+			import.Parse("Product", entity=>
+				
+				_engine.Execute(new AddProductCommand
+				{ 
+					Cost=float.Parse(entity.Cost),
+					Id=int.Parse(entity.Id),
+					Version = int.Parse( entity.Version),
+					Name = entity.Name
+				})
+			);
+
+			import.Parse("OrderProduct", entity=>
+			
+				_engine.Execute(new AddProductToOrder { 
+					ProductId = int.Parse( entity.Product), 
+					OrderId = int.Parse(entity.Order) 
+				})
+			);
 		}
 
 		public EngineConfiguration CreateConfig()

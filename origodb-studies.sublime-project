@@ -1,0 +1,11 @@
+{
+	"folders":
+	[
+		{
+			"follow_symlinks": true,
+			"path": "."
+		}
+	],
+    "solution_file":"./origodb-studies.sln",
+    "auto_complete": true
+}

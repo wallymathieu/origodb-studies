@@ -4,46 +4,59 @@ using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
 using SomeBasicOrigoDbApp.Core;
+using System.Dynamic;
 
 namespace SomeBasicOrigoDbApp.Tests
 {
     public class XmlImport
     {
-        public static object Parse(XElement target, Type type, XNamespace ns)
+        private readonly XNamespace _ns;
+        private readonly XDocument xDocument;
+        public XmlImport(XDocument xDocument, XNamespace ns)
         {
-            var props = type.GetProperties();
-            var customerObj = Activator.CreateInstance(type);
-            foreach (var propertyInfo in props)
-            {
-                XElement propElement = target.Element(ns + propertyInfo.Name);
-                if (null != propElement)
-                {
-                    if (!(propertyInfo.PropertyType.IsValueType || propertyInfo.PropertyType == typeof(string)))
-                    {
-                        Console.WriteLine("ignoring {0} {1}", type.Name, propertyInfo.PropertyType.Name);
-                    }
-                    else
-                    {
-                        var value = Convert.ChangeType(propElement.Value, propertyInfo.PropertyType, CultureInfo.InvariantCulture.NumberFormat);
-                        propertyInfo.SetValue(customerObj, value, null);
-                    }
-                }
-            }
-            return customerObj;
+            _ns = ns;
+            this.xDocument = xDocument;
         }
 
-        public static void Parse(XDocument xDocument, IEnumerable<Type> types, Action<Type, Object> onParsedEntity, XNamespace ns)
+        public IEnumerable<dynamic> Parse(string name, Action<dynamic> onParsedEntity = null)
         {
+            var ns = _ns;
             var db = xDocument.Root;
-            foreach (var type in types)
+            var elements = db.Elements(ns + name);
+            var list = new List<dynamic>();
+            foreach (var element in elements)
             {
-                var elements = db.Elements(ns + type.Name);
+                dynamic secondValue = new Entity( element, _ns);
+                if (null != onParsedEntity) onParsedEntity( secondValue);
+                list.Add((object)secondValue);
+            }
+            return list;
+        }
 
-                foreach (var element in elements)
-                {
-                    var obj = Parse(element, type, ns);
-                    onParsedEntity(type, obj);
-                }
+        private class Entity: DynamicObject
+        {
+            private readonly XElement _element;
+            private readonly XNamespace _ns;
+            public Entity( XElement element, XNamespace ns)
+            {
+                _element = element;
+                _ns = ns;
+            }
+
+            public override IEnumerable<string> GetDynamicMemberNames()
+            {
+                return _element.Elements().Select(e => e.Name.LocalName);
+            }
+
+            public override bool TryGetMember(GetMemberBinder binder, out object result)
+            {
+                var name = binder.Name;
+                var type = binder.ReturnType;
+                var el = _element.Element(_ns + name);
+                result = Convert.ChangeType(el.Value, type);
+                if ( result != null )return true;
+                result = null;
+                return false;
             }
         }
     }
