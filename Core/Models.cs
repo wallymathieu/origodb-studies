@@ -55,7 +55,7 @@ namespace SomeBasicOrigoDbApp.Core
 
 		public Customer GetTheCustomerForOrder(int v)
 		{
-			return GetOrder(v).Customer;
+            return _customers[GetOrder(v).Customer];
 		}
 	}
 }

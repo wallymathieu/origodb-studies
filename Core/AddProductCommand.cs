@@ -19,7 +19,7 @@ namespace SomeBasicOrigoDbApp.Core
 
 		public override void Execute(Models model)
 		{
-			model.Save(new Product{ Id=Id, Cost=Cost, Name=Name, Version=Version });
+            model.Save(new Product( id:Id, cost:Cost, name:Name, version:Version ));
 		}
 	}
 

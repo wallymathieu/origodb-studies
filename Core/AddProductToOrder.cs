@@ -2,6 +2,8 @@ using OrigoDB.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using With;
+using With.ReadonlyEnumerable;
 
 namespace SomeBasicOrigoDbApp.Core
 {
@@ -14,7 +16,8 @@ namespace SomeBasicOrigoDbApp.Core
 		
 		public override void Execute(Models model)
 		{
-			model.GetOrder(OrderId).Products.Add(model.GetProduct(ProductId));
+            model.Save( model.GetOrder(OrderId)
+                .With(o=>o.Products.Add(model.GetProduct(ProductId))) );
 		}
 	}
 

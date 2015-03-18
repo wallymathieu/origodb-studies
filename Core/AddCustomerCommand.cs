@@ -20,7 +20,7 @@ namespace SomeBasicOrigoDbApp.Core
 
 		public override void Execute(Models model)
 		{
-			model.Save(new Customer{ Id = Id, Firstname = Firstname, Lastname = Lastname, Version = Version });
+            model.Save(new Customer( id: Id, firstName: Firstname, lastName: Lastname, version: Version ));
 		}
 	}
 

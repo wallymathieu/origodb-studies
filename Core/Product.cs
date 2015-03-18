@@ -4,19 +4,22 @@ using System.Collections.Generic;
 namespace SomeBasicOrigoDbApp.Core
 {
 	[Serializable]
-	public class Product 
+    public class Product 
     {
+        public Product(int id, float cost, string name, int version)
+        {
+            Id = id;
+            Cost = cost;
+            Name = name;
+            Version = version;           
+        }
 
-        public virtual float Cost { get; set; }
+        public virtual int Id { get; private set; }
 
-        public virtual string Name { get; set; }
+        public virtual float Cost { get; private set; }
 
-        //public virtual IList<Order> Orders { get; set; }
+        public virtual string Name { get; private set; }
 
-        public virtual int Id { get; set; }
-
-        public virtual int Version { get; set; }
-
-
+        public virtual int Version { get; private set; }
     }
 }

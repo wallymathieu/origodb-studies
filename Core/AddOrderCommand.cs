@@ -15,9 +15,11 @@ namespace SomeBasicOrigoDbApp.Core
 
         public virtual int Id { get; set; }
 
-		public override void Execute(Models model)
+        public virtual int Version { get; set; }
+
+        public override void Execute(Models model)
 		{
-            model.Save(new Order{ Customer=model.GetCustomer(Customer), OrderDate=OrderDate,Id=Id} );
+            model.Save(new Order(customer:Customer, orderDate:OrderDate,id:Id, version: Version,products:new Product[0]) );
 		}
 	}
 
