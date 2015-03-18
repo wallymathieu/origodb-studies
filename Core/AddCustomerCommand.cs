@@ -2,12 +2,13 @@ using OrigoDB.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using With;
+using With.ReadonlyEnumerable;
 namespace SomeBasicOrigoDbApp.Core
 {
 
 	[Serializable]
-	public class AddCustomerCommand : Command<Models> 
+	public class AddCustomerCommand : ImmutabilityCommand<Models> 
 	{
 
         public virtual int Id { get; set; }
@@ -18,10 +19,10 @@ namespace SomeBasicOrigoDbApp.Core
 
 		public virtual int Version { get; set; }
 
-		public override void Execute(Models model)
+		public override void Execute(Models model, out Models newModel)
 		{
-            model.Save(new Customer( id: Id, firstName: Firstname, lastName: Lastname, version: Version ));
+			var customer = new Customer(id: Id, firstName: Firstname, lastName: Lastname, version: Version);
+			newModel = model.With(m=>m.Customers.Add(customer));
 		}
 	}
-
 }

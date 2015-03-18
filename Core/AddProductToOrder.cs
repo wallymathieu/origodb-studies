@@ -9,15 +9,18 @@ namespace SomeBasicOrigoDbApp.Core
 {
 
 	[Serializable]
-	public class AddProductToOrder : Command<Models>
+	public class AddProductToOrder : ImmutabilityCommand<Models>
 	{
-		public int OrderId{get;set;}
-		public int ProductId{get;set;}
-		
-		public override void Execute(Models model)
+		public int OrderId { get; set; }
+		public int ProductId { get; set; }
+
+		public override void Execute(Models model, out Models newModel)
 		{
-            model.Save( model.GetOrder(OrderId)
-                .With(o=>o.Products.Add(model.GetProduct(ProductId))) );
+			var order = model.GetOrder(OrderId);
+			var newOrder = order.With(o => o.Products.Add(model.GetProduct(ProductId)));
+			newModel = model
+				.With(m => m.Orders.Remove(order))
+				.With(m => m.Orders.Add(newOrder));
 		}
 	}
 
