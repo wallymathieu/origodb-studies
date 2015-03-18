@@ -6,6 +6,9 @@ using OrigoDB.Core;
 using OrigoDB.Core.Test;
 using System.Linq;
 using System;
+using With;
+using OrigoDB.Core.Configuration;
+
 
 namespace SomeBasicOrigoDbApp.Tests
 {
@@ -103,7 +106,9 @@ namespace SomeBasicOrigoDbApp.Tests
 		public EngineConfiguration CreateConfig()
 		{
 			return EngineConfiguration
-				.Create().ForIsolatedTest();
+				.Create().ForIsolatedTest()
+                .Tap(c=>c.Kernel = Kernels.Immutability)
+                .Tap(c=>c.Synchronization = SynchronizationMode.None);
 		}
 
 
