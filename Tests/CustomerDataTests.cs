@@ -8,7 +8,7 @@ using System.Linq;
 using System;
 using With;
 using OrigoDB.Core.Configuration;
-
+using System.Globalization;
 
 namespace SomeBasicOrigoDbApp.Tests
 {
@@ -83,11 +83,12 @@ namespace SomeBasicOrigoDbApp.Tests
 					OrderDate = DateTime.Parse( entity.OrderDate)
 				})
 			);
-			import.Parse("Product", entity=>
+			var enUs = CultureInfo.GetCultureInfo("en-US");
+            import.Parse("Product", entity=>
 				
 				_engine.Execute(new AddProductCommand
 				{ 
-					Cost=float.Parse(entity.Cost),
+					Cost=float.Parse(entity.Cost, enUs),
 					Id=int.Parse(entity.Id),
 					Version = int.Parse( entity.Version),
 					Name = entity.Name
