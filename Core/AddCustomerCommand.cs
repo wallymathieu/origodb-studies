@@ -7,9 +7,9 @@ using With.ReadonlyEnumerable;
 namespace SomeBasicOrigoDbApp.Core
 {
 
-	[Serializable]
-	public class AddCustomerCommand : ImmutabilityCommand<Models> 
-	{
+    [Serializable]
+    public class AddCustomerCommand : ImmutabilityCommand<Models> 
+    {
         public readonly int Id;
         public readonly string Firstname;
         public readonly string Lastname;
@@ -22,10 +22,10 @@ namespace SomeBasicOrigoDbApp.Core
             Version = version;
         }
 
-		public override void Execute(Models model, out Models newModel)
-		{
-			var customer = new Customer(id: Id, firstName: Firstname, lastName: Lastname, version: Version);
-			newModel = model.With(m=>m.Customers.Add(customer));
-		}
-	}
+        public override void Execute(Models model, out Models newModel)
+        {
+            var customer = new Customer(id: Id, firstName: Firstname, lastName: Lastname, version: Version);
+            newModel = model.With(m=>m.Customers.Add(customer));
+        }
+    }
 }

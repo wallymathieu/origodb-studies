@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SomeBasicOrigoDbApp.Core
 {
-	[Serializable]
+    [Serializable]
     public class Customer 
     {
         public Customer(int id, string firstName, string lastName, int version)
