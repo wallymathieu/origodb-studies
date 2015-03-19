@@ -10,13 +10,18 @@ namespace SomeBasicOrigoDbApp.Core
 	[Serializable]
 	public class AddProductCommand : ImmutabilityCommand<Models>
 	{
-		public virtual float Cost { get; set; }
+        public readonly float Cost;
+        public readonly string Name;
+        public readonly int Id;
+        public readonly int Version;
 
-		public virtual string Name { get; set; }
-
-		public virtual int Id { get; set; }
-
-		public virtual int Version { get; set; }
+        public AddProductCommand(int id, float cost, string name, int version)
+        {
+            Id = id;
+            Cost = cost;
+            Name = name;
+            Version = version;           
+        }
 
 		public override void Execute(Models model, out Models newModel)
 		{

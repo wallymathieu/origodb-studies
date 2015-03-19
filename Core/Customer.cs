@@ -16,9 +16,7 @@ namespace SomeBasicOrigoDbApp.Core
 
         public virtual int Id { get; private set; }
         public virtual string Firstname { get; private set; }
-
         public virtual string Lastname { get; private set; }
-
         public virtual int Version { get; private set; }
     }
 }

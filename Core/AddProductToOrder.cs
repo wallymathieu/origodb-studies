@@ -11,8 +11,14 @@ namespace SomeBasicOrigoDbApp.Core
 	[Serializable]
 	public class AddProductToOrder : ImmutabilityCommand<Models>
 	{
-		public int OrderId { get; set; }
-		public int ProductId { get; set; }
+        public readonly int OrderId;
+        public readonly int ProductId;
+
+        public AddProductToOrder(int orderId, int productId)
+        {
+            OrderId = orderId;
+            ProductId = productId;
+        }
 
 		public override void Execute(Models model, out Models newModel)
 		{

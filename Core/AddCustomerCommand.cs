@@ -10,14 +10,17 @@ namespace SomeBasicOrigoDbApp.Core
 	[Serializable]
 	public class AddCustomerCommand : ImmutabilityCommand<Models> 
 	{
-
-        public virtual int Id { get; set; }
-
-        public virtual string Firstname { get; set; }
-
-        public virtual string Lastname { get; set; }
-
-		public virtual int Version { get; set; }
+        public readonly int Id;
+        public readonly string Firstname;
+        public readonly string Lastname;
+        public readonly int Version;
+        public AddCustomerCommand(int id, string firstName, string lastName, int version)
+        {
+            Id = id;
+            Firstname = firstName;
+            Lastname = lastName;
+            Version = version;
+        }
 
 		public override void Execute(Models model, out Models newModel)
 		{

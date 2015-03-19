@@ -66,41 +66,43 @@ namespace SomeBasicOrigoDbApp.Tests
 			import.Parse("Customer", entity=>
 				
 				_engine.Execute(new AddCustomerCommand
-				{ 
-					Id=int.Parse(entity.Id),
-					Firstname = entity.Firstname,
-					Lastname = entity.Lastname,
-					Version = int.Parse(entity.Version)
-				})
+				    ( 
+					id:int.Parse(entity.Id),
+					firstName: entity.Firstname,
+					lastName: entity.Lastname,
+					version: int.Parse(entity.Version)
+                    ))
 			);
 
 			import.Parse("Order", entity=>
 				
 				_engine.Execute(new AddOrderCommand
-				{ 
-					Customer=int.Parse(entity.Customer),
-					Id=int.Parse(entity.Id),
-					OrderDate = DateTime.Parse( entity.OrderDate)
-				})
+				    ( 
+					customer:int.Parse(entity.Customer),
+					id:int.Parse(entity.Id),
+					orderDate: DateTime.Parse( entity.OrderDate),
+                    version: int.Parse( entity.Version)                      
+                    ))
 			);
 			var enUs = CultureInfo.GetCultureInfo("en-US");
             import.Parse("Product", entity=>
 				
 				_engine.Execute(new AddProductCommand
-				{ 
-					Cost=float.Parse(entity.Cost, enUs),
-					Id=int.Parse(entity.Id),
-					Version = int.Parse( entity.Version),
-					Name = entity.Name
-				})
+				(
+					cost:float.Parse(entity.Cost, enUs),
+					id:int.Parse(entity.Id),
+					version: int.Parse( entity.Version),
+					name: entity.Name
+                    ))
 			);
 
 			import.Parse("OrderProduct", entity=>
 			
-				_engine.Execute(new AddProductToOrder { 
-					ProductId = int.Parse( entity.Product), 
-					OrderId = int.Parse(entity.Order) 
-				})
+				_engine.Execute(new AddProductToOrder
+                ( 
+					productId: int.Parse( entity.Product), 
+                    orderId: int.Parse(entity.Order) 
+                ))
 			);
 		}
 
