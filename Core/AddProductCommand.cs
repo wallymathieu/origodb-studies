@@ -20,7 +20,7 @@ namespace SomeBasicOrigoDbApp.Core
             Id = id;
             Cost = cost;
             Name = name;
-            Version = version;           
+            Version = version;
         }
 
         public override void Execute(Models model, out Models newModel)
