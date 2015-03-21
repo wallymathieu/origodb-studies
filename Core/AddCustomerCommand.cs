@@ -25,7 +25,7 @@ namespace SomeBasicOrigoDbApp.Core
         public override void Execute(Models model, out Models newModel)
         {
             var customer = new Customer(id: Id, firstName: Firstname, lastName: Lastname, version: Version);
-            newModel = model.With(m=>m.Customers.Add(customer));
+            newModel = model.With(m=>m.Customers.Add(customer.Id, customer));
         }
     }
 }

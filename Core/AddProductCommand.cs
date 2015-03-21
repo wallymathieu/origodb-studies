@@ -26,7 +26,7 @@ namespace SomeBasicOrigoDbApp.Core
         public override void Execute(Models model, out Models newModel)
         {
             var product = new Product(id: Id, cost: Cost, name: Name, version: Version);
-            newModel = model.With(m => m.Products.Add(product));
+            newModel = model.With(m => m.Products.Add(product.Id, product));
         }
     }
 

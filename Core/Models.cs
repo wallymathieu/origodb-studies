@@ -1,6 +1,7 @@
 ﻿using OrigoDB.Core;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace SomeBasicOrigoDbApp.Core
@@ -9,48 +10,52 @@ namespace SomeBasicOrigoDbApp.Core
     public class Models : Model
     {
         public Models()
-            : this(new Customer[0], new Product[0], new Order[0])
+            : this(
+                  new ReadOnlyDictionary<int,Customer>(new Dictionary<int,Customer>()),
+                  new ReadOnlyDictionary<int, Product>(new Dictionary<int, Product>()),
+                  new ReadOnlyDictionary<int, Order>(new Dictionary<int, Order>())
+                  )
         {
         }
-        public Models(IEnumerable<Customer> customers, IEnumerable<Product> products, IEnumerable<Order> orders)
+        public Models(IReadOnlyDictionary<int, Customer> customers, IReadOnlyDictionary<int, Product> products, IReadOnlyDictionary<int, Order> orders)
         {
             Customers = customers;
             Products = products;
             Orders = orders;
         }
 
-        public readonly IEnumerable<Customer> Customers;
-        public readonly IEnumerable<Product> Products;
-        public readonly IEnumerable<Order> Orders;
+        public readonly IReadOnlyDictionary<int, Customer> Customers;
+        public readonly IReadOnlyDictionary<int, Product> Products;
+        public readonly IReadOnlyDictionary<int,Order> Orders;
 
         public IEnumerable<Customer> QueryOverCustomers()
         {
-            return Customers;
+            return Customers.Values;
         }
 
         public Customer GetCustomer(int v)
         {
-            return Customers.Single(c => c.Id == v);
+            return Customers[v];
         }
 
         public IEnumerable<Product> QueryOverProducts()
         {
-            return Products;
+            return Products.Values;
         }
 
         public Product GetProduct(int v)
         {
-            return Products.Single(c => c.Id == v);
+            return Products[v];
         }
 
         public IEnumerable<Order> QueryOverOrders()
         {
-            return Orders;
+            return Orders.Values;
         }
 
         public Order GetOrder(int v)
         {
-            return Orders.Single(c => c.Id == v);
+            return Orders[v];
         }
 
         public Customer GetTheCustomerForOrder(int v)
