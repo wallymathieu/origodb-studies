@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <RootNamespace>SomeBasicOrigoDbApp.Tests</RootNamespace>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>net462</TargetFramework>
     <AssemblyTitle>Tests</AssemblyTitle>
     <Product>Tests</Product>
     <Copyright>Copyright ©  2015</Copyright>
