@@ -1,61 +1,59 @@
 ﻿using System.IO;
 using System.Xml.Linq;
-using NUnit.Framework;
 using SomeBasicOrigoDbApp.Core;
 using OrigoDB.Core;
 using OrigoDB.Core.Test;
 using System.Linq;
 using System;
+using Xunit;
 
 namespace SomeBasicOrigoDbApp.Tests
 {
-	[TestFixture]
 	public class CustomerDataTests
 	{
 
-		private LocalEngineClient<Models> _engine;
+		private static LocalEngineClient<Models> _engine;
 
-		[Test]
+		[Fact]
 		public void CanGetCustomerById()
 		{
 			var customer = _engine.Execute(new GetCustomer { Id = 1 });
 
-			Assert.IsNotNull(customer);
+			Assert.NotNull(customer);
 		}
 
-		[Test]
+		[Fact]
 		public void CanGetCustomerByFirstname()
 		{
 			var customers = _engine.Execute(m=>
 				m.QueryOverCustomers()
 				.Where(c => c.Firstname == "Steve")
 				.ToList());
-			Assert.AreEqual(3, customers.Count);
+			Assert.Equal(3, customers.Count);
 		}
 
-		[Test]
+		[Fact]
 		public void CanGetProductById()
 		{
 			var product = _engine.Execute(m=>m.GetProduct(1));
 
-			Assert.IsNotNull(product);
+			Assert.NotNull(product);
 		}
 
-		[Test]
+		[Fact]
 		public void OrderContainsProduct()
 		{
 			var order = _engine.Execute(m=>m.GetOrder(1));
 			Assert.True(order.Products.Any(p => p.Id == 1));
 		}
-		[Test]
+		[Fact]
 		public void OrderHasACustomer()
 		{
-			Assert.IsNotNullOrEmpty(_engine.Execute(m=>m.GetTheCustomerForOrder(1)).Firstname);
+			Assert.False(string.IsNullOrEmpty( _engine.Execute(m=>m.GetTheCustomerForOrder(1)).Firstname));
 		}
 
 
-		[TestFixtureSetUp]
-		public void TestFixtureSetup()
+		static CustomerDataTests()
 		{
 			_engine =(LocalEngineClient<Models>) Engine.For<Models>(CreateConfig());
 			var import = new XmlImport(XDocument.Load(Path.Combine("TestData", "TestData.xml")), "http://tempuri.org/Database.xsd");
@@ -100,14 +98,12 @@ namespace SomeBasicOrigoDbApp.Tests
 			);
 		}
 
-		public EngineConfiguration CreateConfig()
+		static EngineConfiguration CreateConfig()
 		{
-			return EngineConfiguration
-				.Create().ForIsolatedTest();
+			return new EngineConfiguration().ForIsolatedTest();
 		}
 
 
-		[TestFixtureTearDown]
 		public void TestFixtureTearDown()
 		{
 			Config.Engines.CloseAll();
