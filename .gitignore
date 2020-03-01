@@ -56,3 +56,5 @@ packages/
 .vs
 
 *.userprefs
+
+.ionide/

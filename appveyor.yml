@@ -1,3 +1,4 @@
+image: Visual Studio 2019
 version: 1.0.{build}
 configuration: Release
 before_build:
@@ -10,3 +11,6 @@ nuget:
   account_feed: false
   project_feed: false
   disable_publish_on_pr: true
+branches:
+  only: 
+    - master
